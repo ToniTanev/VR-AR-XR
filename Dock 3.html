@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Пристанище</title>
+		<meta charset="utf-8">
+		
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		
+		<script src="three.min.js"></script>
+		<script src="vax.js"></script>
+		<script src="OrbitControls.js"></script>
+		<script src="StereoEffect.js"></script>
+	</head>
+	
+	<body>
+		<script>
+			vaxInitParallax(-1);
+
+			//var contrls = new THREE.OrbitControls(camera, renderer.domElement);
+
+			light.castShadow = true;
+			light.position.set(200,150,300);
+
+			camera.position.set(270,80,240);
+			camera.lookAt(170, 0, 0);
+
+			var ambientLight = new THREE.AmbientLight('white');
+			ambientLight.intensity = 0.3;
+			scene.add(ambientLight);
+
+			function createBoat()
+			{
+				var boat = new THREE.Group();
+
+				var sphereGeom = new THREE.SphereGeometry(15, 32, 16, 0, Math.PI, 0, Math.PI/2);
+				var boatMaterial = new THREE.MeshLambertMaterial({color: 'brown', side: THREE.DoubleSide});
+				var sphere = new THREE.Mesh(sphereGeom, boatMaterial);
+
+				sphere.scale.set(1.5, 1, 7);
+				sphere.rotateX(THREE.Math.degToRad(180));
+				sphere.receiveShadow = true;
+
+				boat.add(sphere);
+
+				var circle1Geom = new THREE.CircleGeometry(15, 32, 0, Math.PI);
+				var circle1 = new THREE.Mesh(circle1Geom, boatMaterial);
+				circle1.rotateX(THREE.Math.degToRad(180));
+				circle1.scale.set(1.5, 1, 1);
+
+				boat.add(circle1);
+
+				var circle2Geom = new THREE.CircleGeometry(15, 32, 0, Math.PI);
+				var circle2 = new THREE.Mesh(circle2Geom, boatMaterial);
+				circle2.rotateX(THREE.Math.degToRad(90));
+				circle2.rotateZ(THREE.Math.degToRad(180));
+				circle2.scale.set(1.38, 6, 1);
+				circle2.translateZ(6);
+
+				boat.add(circle2);
+
+				var cylGeometry = new THREE.CylinderGeometry(1, 1, 70, 32);
+				var cylinder1 = new THREE.Mesh(cylGeometry, boatMaterial);
+				cylinder1.translateZ(-50);
+				cylinder1.translateY(30);
+
+				boat.add(cylinder1);
+
+				cylGeometry = new THREE.CylinderGeometry(1, 1, 40, 32);
+				var cylinder2 = new THREE.Mesh(cylGeometry, boatMaterial);
+				cylinder2.rotateX(THREE.Math.degToRad(90));
+				cylinder2.translateY(-30);
+				cylinder2.translateZ(-15);
+
+				boat.add(cylinder2);
+
+				var flagGeometry = new THREE.CylinderGeometry(10, 10, 0.2, 3);
+				var flagMaterial = new THREE.MeshLambertMaterial({color: 'white'});
+				var flag = new THREE.Mesh(flagGeometry, flagMaterial);
+				flag.rotateZ(THREE.Math.degToRad(90));
+				flag.scale.set(2, 4, 3);
+				flag.translateX(40);
+				flag.translateZ(-33);
+
+				boat.add(flag);
+
+				return boat
+			}
+
+			var boat = createBoat();
+			boat.translateX(100);
+			scene.add(boat);
+
+			var waterGeometry = new THREE.PlaneGeometry(750, 750, 100, 100);
+			var waterMaterial = new THREE.MeshPhysicalMaterial(
+					{	color: 'blue',
+						side: THREE.DoubleSide,
+						transparent: true,
+						opacity: 0.3,
+						clearcoatRoughness: 0.1,
+						reflectivity: 1
+					}
+			);
+			var water = new THREE.Mesh(waterGeometry, waterMaterial);
+			water.rotateX(THREE.Math.degToRad(90));
+			water.translateZ(5);
+
+			scene.add(water);
+
+			var dockMaterial = new THREE.MeshLambertMaterial({color: '#873e23'});
+			function createDockPlatform( length, height, width, cntGaps)
+			{
+				var dockPlatform = new THREE.Group();
+
+				var dockGeometry = new THREE.BoxGeometry(length, height, width);
+				var dockWood = new THREE.Mesh(dockGeometry, dockMaterial);
+
+				dockPlatform.add(dockWood);
+
+				var gapGeometry = new THREE.BoxGeometry(length + 0.01, height + 0.01, 0.5)
+				var gapMaterial = new THREE.MeshLambertMaterial({color: 'black'});
+				var distBetwGaps = width / cntGaps;
+				for(var i = 1; i < cntGaps; i++)
+				{
+					var gap = new THREE.Mesh(gapGeometry, gapMaterial);
+					gap.translateZ(-width/2 + i*distBetwGaps);
+					dockPlatform.add(gap);
+				}
+
+				return dockPlatform;
+			}
+
+			var length = 50;
+			var height = 5;
+			var dockPlatform1 = createDockPlatform(length, height, 400, 20);
+			dockPlatform1.translateX(40);
+			dockPlatform1.translateZ(-150);
+			dockPlatform1.translateY(10);
+			scene.add(dockPlatform1);
+
+			var dockPlatform2 = createDockPlatform(length, height, 750, 40);
+			dockPlatform2.rotateY(THREE.Math.degToRad(90));
+			dockPlatform2.translateY(10);
+			dockPlatform2.translateX(350);
+			scene.add(dockPlatform2);
+
+			var legGeometry = new THREE.CylinderGeometry(4, 4, 70, 20);
+			var dockLeg1 = new THREE.Mesh(legGeometry, dockMaterial);
+			scene.add(dockLeg1);
+			dockLeg1.translateY(-25);
+			dockLeg1.translateX(40);
+
+			var dockLeg2 = dockLeg1.clone();
+			scene.add(dockLeg2);
+			dockLeg2.translateZ(-350);
+
+			var dockLeg3 = dockLeg2.clone();
+			scene.add(dockLeg3);
+			dockLeg3.translateX(320);
+
+			var dockLeg4 = dockLeg2.clone();
+			scene.add(dockLeg4);
+			dockLeg4.translateX(-380);
+
+			function animate( t )
+			{
+				var positionAttribute = water.geometry.attributes.position;
+
+				for ( var i = 0; i < positionAttribute.count; i ++ )
+				{
+					var x = positionAttribute.getX( i );
+					var y = positionAttribute.getY( i );
+					var z = positionAttribute.getZ( i );
+
+					z = 8;
+					z += Math.sin(t/2 + i) * 2;
+					z += Math.sin(t + i/2) * 2;
+					z += Math.sin(t + i/4) * 2;
+
+					positionAttribute.setXYZ( i, x, y, z );
+				}
+
+				water.geometry.attributes.position.needsUpdate = true;
+
+				boat.rotation.set(Math.sin(t/2)*0.03, 0, Math.sin(t)*0.1);
+			}
+		</script>
+	</body>
+</html>
+
+
