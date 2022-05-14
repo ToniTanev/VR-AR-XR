@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>E1113: Кубична текстура</title>
+		<meta charset="utf-8">
+		
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		
+		<script src="three.min.js"></script>
+		<script src="OrbitControls.js"></script>
+		<script src="vax.js"></script>
+	</head>
+	
+	<body>
+		<script>
+			vaxInit();
+			
+			camera.fov = 30;
+			camera.position.set(0, 0, 1);
+			//camera.lookAt( new THREE.Vector3(50, 1, 50));
+
+			onWindowResize();
+
+			window.addEventListener( "deviceorientation", deviceOrientation, true);
+
+			start = true;
+			oldBeta = 0;
+			oldGamma = 0;
+			dBeta = 0;
+			dGamma = 0;
+
+			function deviceOrientation( event )
+			{
+				var alpha = event.alpha.toFixed(1);
+				var beta = event.beta.toFixed(1);
+				var gamma = event.gamma.toFixed(1);
+
+				if(start)
+				{
+					start = false;
+				}
+				else
+				{
+					/*if(beta * oldBeta < 0)
+					{
+						dBeta = 0;
+					}
+					else
+					{
+						dBeta = beta - oldBeta;
+					}
+
+					if(gamma * oldGamma < 0)
+					{
+						dGamma = 0;
+					}
+					else
+					{
+						dGamma = gamma - oldGamma;
+					}*/
+
+					dBeta = beta - oldBeta;
+					dGamma = gamma - oldGamma;
+				}
+
+				if(Math.abs(dGamma) > Math.abs(dBeta))
+				{
+					dBeta = 0;
+				}
+				else
+				{
+					dGamma = 0;
+				}
+
+				oldBeta = beta;
+				oldGamma = gamma;
+			}
+	
+			var controls = new THREE.OrbitControls( camera, renderer.domElement );
+				controls.enableZoom = false;
+				controls.enablePan = false;
+				controls.enableDamping = true;
+				controls.minPolarAngle = 0.1;
+				controls.maxPolarAngle = Math.PI - 0.1;
+				controls.dampingFactor = 0.1;
+
+				
+			var cubeTex = new THREE.CubeTextureLoader().load( [
+				'posx.jpg', 'negx.jpg',
+				'posy.jpg', 'negy.jpg',
+				'posz.jpg', 'negz.jpg' ] );
+
+			cubeTex.mapping = THREE.CubeRefractionMapping;
+
+			scene.background = cubeTex;
+
+			var geom = new THREE.IcosahedronGeometry(10, 0);
+			var mat = new THREE.MeshBasicMaterial({envMap: cubeTex})
+
+			var objs = [];
+			var n = 10;
+			for(var i = 0; i < n; i++)
+			{
+				var obj = new THREE.Mesh(geom, mat);
+				var dist = 100 + 100*Math.random();
+				var height = 10 + 30*Math.random();
+				obj.position.set(dist*Math.cos(i*2*Math.PI/n), height, 1 + dist*Math.sin(i*2*Math.PI/n));
+
+				objs.push(obj);
+				scene.add(obj);
+			}
+
+			var accumAngleY = 0;
+			var accumAngleX = 0;
+			function animate(t)
+			{
+				controls.update();
+				//camera.rotation.set(0, t/3, 0);
+				//console.log(dGamma);
+				//if (dGamma > 1)
+				{
+					accumAngleY += dGamma;
+					accumAngleX += dBeta;
+					camera.rotateY(-accumAngleY/20);
+					camera.rotateX(-accumAngleX/20);
+					//camera.rotation.set(0, dGamma*10, 0);
+					dBeta = 0;
+					dGamma = 0;
+				}
+				//camera.rotateY(t);
+
+				for(var i = 0; i < n; i++)
+				{
+					objs[i].rotation.set(t/2, t/2, 0);
+				}
+			}
+			
+		</script>
+		
+	</body>
+</html>
+
+
