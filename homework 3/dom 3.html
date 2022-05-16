@@ -122,6 +122,7 @@
 			// -45 -> 45
 			// -0 -> 90
 
+			var modifiedAlpha = 0.0;
 			var modifiedGamma = 0.0;
 
 			function animate( t )
@@ -146,6 +147,15 @@
 					}
 				}*/
 
+				if(gamma < 0.0)
+				{
+					modifiedAlpha = alpha + 180.0;
+				}
+				else
+				{
+					modifiedAlpha = alpha;
+				}
+
 				if(alpha > 200.0)
 				{
 					modifiedGamma = gamma - 90.0;
@@ -161,9 +171,11 @@
 				//scene.rotation.set(/*gamma*/THREE.Math.degToRad(45), beta, 0);
 				//console.log(gamma);
 				//console.log(beta);
-				console.log(modifiedGamma);
+				//console.log(modifiedGamma);
+				console.log(modifiedAlpha);
 				//scene.rotation.set(THREE.Math.degToRad(modifiedGamma), THREE.Math.degToRad(alpha), 0);
-				scene.rotation.set(0, THREE.Math.degToRad(alpha), 0);
+				scene.rotation.set(0, -THREE.Math.degToRad(modifiedAlpha), 0);
+				//scene.rotation.set(THREE.Math.degToRad(modifiedGamma), -THREE.Math.degToRad(modifiedAlpha), 0);
 				//scene.rotation.set(0, THREE.Math.degToRad(beta), THREE.Math.degToRad(modifiedGamma));
 				//scene.rotation.set(THREE.Math.degToRad(modifiedGamma), 0, 0);
 				//scene.rotation.set(THREE.Math.degToRad(gamma + 90.0), 0, 0);
