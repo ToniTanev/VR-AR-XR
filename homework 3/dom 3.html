@@ -10,11 +10,12 @@
 		<script src="three.min.js"></script>
 		<script src="vax.js"></script>
 		<script src="OrbitControls.js"></script>
+		<script src="StereoEffect.js"></script>
 	</head>
 	
 	<body>
 		<script>
-			vaxInit();
+			vaxInitParallax(-1);
 			camera.position.set(0, 0, 1);
 
 			window.addEventListener( "deviceorientation", deviceOrientation, true);
