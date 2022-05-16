@@ -19,6 +19,7 @@
 
 			window.addEventListener( "deviceorientation", deviceOrientation, true);
 
+			var prevAlpha = 90.0;
 			var alpha = 90.0;
 			var beta = 0.0;
 			var gamma = -90.0;
@@ -26,6 +27,8 @@
 
 			function deviceOrientation( event )
 			{
+				prevAlpha = alpha;
+
 				dGamma = event.gamma - gamma;
 				alpha = event.alpha;
 				beta = event.beta;
@@ -127,26 +130,6 @@
 
 			function animate( t )
 			{
-				/*if(gamma > 0.0)
-				{
-					modifiedGamma = gamma - 90.0;
-				}
-				else if(gamma < 0.0)
-				{
-					modifiedGamma = gamma + 90.0;
-				}
-				else
-				{
-					if(dGamma >= 0.0)
-					{
-						modifiedGamma = 90.0;
-					}
-					else
-					{
-						modifiedGamma = -90.0;
-					}
-				}*/
-
 				if(gamma < 0.0)
 				{
 					modifiedAlpha = alpha + 180.0;
@@ -156,29 +139,45 @@
 					modifiedAlpha = alpha;
 				}
 
-				if(alpha > 200.0)
+				if(alpha > 180.0)
 				{
+					if(gamma < 0.0)
+					{
+						//modifiedAlpha = modifiedAlpha - 180;
+					}
+
 					modifiedGamma = gamma - 90.0;
 				}
 				else
 				{
+					if(gamma > 0.0)
+					{
+						//modifiedAlpha = modifiedAlpha - 180;
+					}
+
 					modifiedGamma = gamma + 90.0;
 				}
 
-				//scene.rotation.set(/*gamma*/0, beta, 0);
-				//scene.rotation.set(/*gamma*/0, THREE.Math.degToRad(beta), 0);
+				/*if(alpha < 180)
+				{
+					modifiedGamma = -modifiedGamma;
+				}*/
 
-				//scene.rotation.set(/*gamma*/THREE.Math.degToRad(45), beta, 0);
-				//console.log(gamma);
-				//console.log(beta);
-				//console.log(modifiedGamma);
+				/*if(prevAlpha > 170.0 && prevAlpha <= 180.0 && alpha > 180.0)
+				{
+					modifiedAlpha = -modifiedAlpha;
+					modifiedGamma = -modifiedGamma;
+				}*/
+
+				console.log(modifiedGamma);
 				console.log(modifiedAlpha);
-				//scene.rotation.set(THREE.Math.degToRad(modifiedGamma), THREE.Math.degToRad(alpha), 0);
-				scene.rotation.set(0, -THREE.Math.degToRad(modifiedAlpha), 0);
-				//scene.rotation.set(THREE.Math.degToRad(modifiedGamma), -THREE.Math.degToRad(modifiedAlpha), 0);
+
+				//scene.rotation.set(0, -THREE.Math.degToRad(modifiedAlpha), 0);
+				//scene.rotation.set(THREE.Math.degToRad(modifiedGamma), 0, 0, 'XYZ');
+				scene.rotation.set(THREE.Math.degToRad(modifiedGamma), -THREE.Math.degToRad(modifiedAlpha), 0, 'XYZ');
 				//scene.rotation.set(0, THREE.Math.degToRad(beta), THREE.Math.degToRad(modifiedGamma));
-				//scene.rotation.set(THREE.Math.degToRad(modifiedGamma), 0, 0);
-				//scene.rotation.set(THREE.Math.degToRad(gamma + 90.0), 0, 0);
+
+				//scene.rotation.set(THREE.Math.degToRad(135), -THREE.Math.degToRad(modifiedAlpha), 0, 'XYZ');
 			}
 		</script>
 		
