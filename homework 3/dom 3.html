@@ -1,0 +1,176 @@
+﻿<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Домашно 3</title>
+		<meta charset="utf-8">
+		
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		
+		<script src="three.min.js"></script>
+		<script src="vax.js"></script>
+		<script src="OrbitControls.js"></script>
+	</head>
+	
+	<body>
+		<script>
+			vaxInit();
+			camera.position.set(0, 0, 1);
+
+			window.addEventListener( "deviceorientation", deviceOrientation, true);
+
+			var alpha = 90.0;
+			var beta = 0.0;
+			var gamma = -90.0;
+			var dGamma = 0.0;
+
+			function deviceOrientation( event )
+			{
+				dGamma = event.gamma - gamma;
+				alpha = event.alpha;
+				beta = event.beta;
+				gamma = event.gamma;
+			}
+
+			var controls = new THREE.OrbitControls( camera, renderer.domElement );
+			controls.enableZoom = false;
+			controls.enablePan = false;
+			controls.enableDamping = true;
+			controls.minPolarAngle = 0.1;
+			controls.maxPolarAngle = Math.PI - 0.1;
+			controls.dampingFactor = 0.1;
+
+			var cubeDim = 1000;
+			var geometry = new THREE.BoxGeometry( cubeDim, cubeDim, cubeDim );
+			var	material = new THREE.MeshLambertMaterial( {color: 'lightgreen', side:THREE.DoubleSide} );
+			var	cube = new THREE.Mesh( geometry, material );
+
+			var coneRad = 10;
+			var coneHeight = 30;
+			var coneGeometry = new THREE.ConeGeometry(coneRad, coneHeight, 20, 1);
+
+			var halfCubeDimMinusRad = cubeDim/2 - coneRad;
+			var halfCubeDimMinusHeight = cubeDim/2 - coneHeight;
+
+			var conesPerWall = 100;
+			// wall 1
+			for(var i = 0; i < conesPerWall; i++)
+			{
+				var randColor = new THREE.Color(Math.random(), Math.random(), Math.random());
+				var coneMaterial = new THREE.MeshLambertMaterial({color: randColor});
+				var cone = new THREE.Mesh(coneGeometry, coneMaterial);
+				cone.position.set(Math.random()*halfCubeDimMinusRad*2 - halfCubeDimMinusRad, Math.random()*halfCubeDimMinusHeight*2 - halfCubeDimMinusHeight, halfCubeDimMinusRad);
+				scene.add(cone);
+			}
+
+			// wall 2
+			for(var i = 0; i < conesPerWall; i++)
+			{
+				var randColor = new THREE.Color(Math.random(), Math.random(), Math.random());
+				var coneMaterial = new THREE.MeshLambertMaterial({color: randColor});
+				var cone = new THREE.Mesh(coneGeometry, coneMaterial);
+				cone.position.set(Math.random()*halfCubeDimMinusRad*2 - halfCubeDimMinusRad, Math.random()*halfCubeDimMinusHeight*2 - halfCubeDimMinusHeight, -halfCubeDimMinusRad);
+				scene.add(cone);
+			}
+
+			// wall 3
+			for(var i = 0; i < conesPerWall; i++)
+			{
+				var randColor = new THREE.Color(Math.random(), Math.random(), Math.random());
+				var coneMaterial = new THREE.MeshLambertMaterial({color: randColor});
+				var cone = new THREE.Mesh(coneGeometry, coneMaterial);
+				cone.position.set(halfCubeDimMinusRad, Math.random()*halfCubeDimMinusHeight*2 - halfCubeDimMinusHeight, Math.random()*halfCubeDimMinusRad*2 - halfCubeDimMinusRad);
+				scene.add(cone);
+			}
+
+			// wall 4
+			for(var i = 0; i < conesPerWall; i++)
+			{
+				var randColor = new THREE.Color(Math.random(), Math.random(), Math.random());
+				var coneMaterial = new THREE.MeshLambertMaterial({color: randColor});
+				var cone = new THREE.Mesh(coneGeometry, coneMaterial);
+				cone.position.set(-halfCubeDimMinusRad, Math.random()*halfCubeDimMinusHeight*2 - halfCubeDimMinusHeight, Math.random()*halfCubeDimMinusRad*2 - halfCubeDimMinusRad);
+				scene.add(cone);
+			}
+
+			// wall 5
+			for(var i = 0; i < conesPerWall; i++)
+			{
+				var randColor = new THREE.Color(Math.random(), Math.random(), Math.random());
+				var coneMaterial = new THREE.MeshLambertMaterial({color: randColor});
+				var cone = new THREE.Mesh(coneGeometry, coneMaterial);
+				cone.position.set(Math.random()*halfCubeDimMinusRad*2 - halfCubeDimMinusRad, halfCubeDimMinusHeight, Math.random()*halfCubeDimMinusRad*2 - halfCubeDimMinusRad);
+				scene.add(cone);
+			}
+
+			// wall 6
+			for(var i = 0; i < conesPerWall; i++)
+			{
+				var randColor = new THREE.Color(Math.random(), Math.random(), Math.random());
+				var coneMaterial = new THREE.MeshLambertMaterial({color: randColor});
+				var cone = new THREE.Mesh(coneGeometry, coneMaterial);
+				cone.position.set(Math.random()*halfCubeDimMinusRad*2 - halfCubeDimMinusRad, -halfCubeDimMinusHeight, Math.random()*halfCubeDimMinusRad*2 - halfCubeDimMinusRad);
+				scene.add(cone);
+			}
+				
+			scene.add( cube );
+
+			// mapping gamma:
+			// 90/-90 -> 0
+			// +45 -> -45
+			// +0 -> -90
+			// -45 -> 45
+			// -0 -> 90
+
+			var modifiedGamma = 0.0;
+
+			function animate( t )
+			{
+				/*if(gamma > 0.0)
+				{
+					modifiedGamma = gamma - 90.0;
+				}
+				else if(gamma < 0.0)
+				{
+					modifiedGamma = gamma + 90.0;
+				}
+				else
+				{
+					if(dGamma >= 0.0)
+					{
+						modifiedGamma = 90.0;
+					}
+					else
+					{
+						modifiedGamma = -90.0;
+					}
+				}*/
+
+				if(alpha > 200.0)
+				{
+					modifiedGamma = gamma - 90.0;
+				}
+				else
+				{
+					modifiedGamma = gamma + 90.0;
+				}
+
+				//scene.rotation.set(/*gamma*/0, beta, 0);
+				//scene.rotation.set(/*gamma*/0, THREE.Math.degToRad(beta), 0);
+
+				//scene.rotation.set(/*gamma*/THREE.Math.degToRad(45), beta, 0);
+				//console.log(gamma);
+				//console.log(beta);
+				console.log(modifiedGamma);
+				//scene.rotation.set(THREE.Math.degToRad(modifiedGamma), THREE.Math.degToRad(alpha), 0);
+				scene.rotation.set(0, THREE.Math.degToRad(alpha), 0);
+				//scene.rotation.set(0, THREE.Math.degToRad(beta), THREE.Math.degToRad(modifiedGamma));
+				//scene.rotation.set(THREE.Math.degToRad(modifiedGamma), 0, 0);
+				//scene.rotation.set(THREE.Math.degToRad(gamma + 90.0), 0, 0);
+			}
+		</script>
+		
+	</body>
+</html>
+
+
